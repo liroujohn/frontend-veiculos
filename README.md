@@ -7,7 +7,8 @@ Interface para gerenciamento de veículos, desenvolvida como parte do processo s
 Aqui estão algumas capturas de tela da aplicação em funcionamento:
 
 <img width="1829" height="860" alt="image" src="https://github.com/user-attachments/assets/29aeace7-385f-4e72-a668-c8a5b6b702b5" />
-<img width="1831" height="766" alt="image" src="https://github.com/user-attachments/assets/22512489-9216-401f-a84e-74c4ca3c04ca" />
+<img width="1874" height="760" alt="image" src="https://github.com/user-attachments/assets/15d39464-6f9f-4201-b844-64ea35949b85" />
+<img width="1908" height="895" alt="image" src="https://github.com/user-attachments/assets/7d58b4c8-6a41-4c49-92d5-aff57043c7d0" />
 <img width="1906" height="900" alt="image" src="https://github.com/user-attachments/assets/8833c3ec-2622-49d6-ab55-c7aca9de0224" />
 <img width="1907" height="896" alt="image" src="https://github.com/user-attachments/assets/00ed1d65-2653-405e-8fd0-9129d91e8e90" />
 
