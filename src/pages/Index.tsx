@@ -35,7 +35,7 @@ const Index = () => {
   const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | undefined>();
 
   const itemsPerPage = 5;
-  const totalItems = 100;
+  const totalItems = 50;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const fetchVehicles = async () => {
