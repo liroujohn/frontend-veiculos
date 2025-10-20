@@ -11,6 +11,16 @@ import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import VehicleDialog from "@/components/VehicleDialog";
 import z from "zod";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Index = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -21,10 +31,12 @@ const Index = () => {
   const { toast } = useToast();
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | undefined>();
 
-  const itemsPerPage = 5
-  const totalItems = 100
-  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const itemsPerPage = 5;
+  const totalItems = 100;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const fetchVehicles = async () => {
     setLoading(true);
@@ -37,7 +49,6 @@ const Index = () => {
 
       const response = await VehicleService.findByFilter(params);
       setVehicles(response);
-
     } catch (error) {
       console.error("Erro ao buscar veículos:", error);
       toast({
@@ -55,13 +66,13 @@ const Index = () => {
   }, [filters, currentPage]);
 
   const vehicleFilterFormSchema = z.object({
-  brand: z.string().optional(),
-  decade: z.string().optional(),
-  sold: z.enum(["any", "true", "false"]).optional(),
-  registeredLastWeek: z.enum(["any", "true", "false"]).optional(),
-});
+    brand: z.string().optional(),
+    decade: z.string().optional(),
+    sold: z.enum(["any", "true", "false"]).optional(),
+    registeredLastWeek: z.enum(["any", "true", "false"]).optional(),
+  });
 
-type VehicleFilterFormData = z.infer<typeof vehicleFilterFormSchema>;
+  type VehicleFilterFormData = z.infer<typeof vehicleFilterFormSchema>;
 
   const handleFilterSubmit = (data: VehicleFilterFormData) => {
     const newFilters: VehicleFilterParams = {
@@ -98,6 +109,35 @@ type VehicleFilterFormData = z.infer<typeof vehicleFilterFormSchema>;
     setSelectedVehicle(vehicle);
     setDialogOpen(true);
   };
+
+  const handleDeleteVehicle = (vehicle: Vehicle) => {
+    setVehicleToDelete(vehicle);
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!vehicleToDelete) return;
+
+    try {
+      await VehicleService.delete(vehicleToDelete.id);
+      toast({
+        title: "Sucesso",
+        description: "Veículo excluído com sucesso",
+      });
+      fetchVehicles();
+    } catch (error) {
+      console.error("Erro ao excluir veículo:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir o veículo.",
+        variant: "destructive",
+      });
+    } finally {
+      setConfirmDialogOpen(false);
+      setVehicleToDelete(undefined);
+    }
+  };
+
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -151,7 +191,11 @@ type VehicleFilterFormData = z.infer<typeof vehicleFilterFormSchema>;
           </div>
         ) : (
           <>
-            <VehicleTable vehicles={vehicles} onEdit={handleEditVehicle} />
+            <VehicleTable
+              vehicles={vehicles}
+              onEdit={handleEditVehicle}
+              onDelete={handleDeleteVehicle}
+            />
 
             <div className="flex justify-center pt-4">
               <Pagination
@@ -169,6 +213,25 @@ type VehicleFilterFormData = z.infer<typeof vehicleFilterFormSchema>;
           onSubmit={handleSubmitVehicle}
           vehicle={selectedVehicle}
         />
+
+        <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta ação não pode ser desfeita. Isso excluirá permanentemente o veículo
+                {vehicleToDelete && ` ${vehicleToDelete.brand} (${vehicleToDelete.description})`}.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmDelete}>
+                Confirmar Exclusão
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
       </main>
     </div>
   );

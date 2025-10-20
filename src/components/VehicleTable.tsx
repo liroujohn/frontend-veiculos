@@ -10,14 +10,15 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface VehicleTableProps {
   vehicles: Vehicle[];
   onEdit: (vehicle: Vehicle) => void;
+  onDelete: (vehicle: Vehicle) => void;
 }
 
-export function VehicleTable({ vehicles, onEdit }: VehicleTableProps) {
+export function VehicleTable({ vehicles, onEdit, onDelete }: VehicleTableProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
@@ -53,7 +54,7 @@ export function VehicleTable({ vehicles, onEdit }: VehicleTableProps) {
                 <TableHead className="text-muted-foreground font-semibold">Ano</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Vendido?</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Criado em</TableHead>
-                <TableHead className="text-muted-foreground font-semibold">Ações</TableHead>
+                <TableHead className="text-muted-foreground font-semibold text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -87,15 +88,25 @@ export function VehicleTable({ vehicles, onEdit }: VehicleTableProps) {
                     {formatDate(vehicle.createdAt)}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onEdit(vehicle)}
-                      className="border-border text-foreground hover:bg-secondary"
-                    >
-                      <Pencil className="h-4 w-4 mr-1" />
-                      Editar
-                    </Button>
+                    <div className="flex items-center justify-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onEdit(vehicle)}
+                        className="border-border text-foreground hover:bg-secondary"
+                      >
+                        <Pencil className="h-4 w-4 mr-1" />
+                        Editar
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => onDelete(vehicle)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Excluir
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
